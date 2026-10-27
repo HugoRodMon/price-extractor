@@ -1,11 +1,15 @@
 # PyInstaller recipe for PriceExtractor.exe  ->  pyinstaller PriceExtractor.spec
 # (the GitHub Action runs this; you only need it to build locally)
-from PyInstaller.utils.hooks import collect_all, collect_submodules
+from pathlib import Path
+
+from PyInstaller.utils.hooks import collect_all
 
 datas = [("pricex/data", "pricex/data")]
 binaries = []
-# supplier parsers are found at run time, so PyInstaller has to be told about them
-hiddenimports = collect_submodules("pricex.suppliers")
+# supplier parsers are found at run time, so PyInstaller has to be told about them.
+# Listed from the folder (collect_submodules finds nothing when run as `pyinstaller` instead of `python -m`).
+hiddenimports = ["pricex.suppliers." + f.stem for f in sorted(Path("pricex/suppliers").glob("*.py"))
+                 if f.stem != "__init__"]
 for pkg in ("tkinterdnd2", "pypdfium2", "pypdfium2_raw"):
     d, b, h = collect_all(pkg)
     datas += d

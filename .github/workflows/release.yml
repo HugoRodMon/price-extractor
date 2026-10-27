@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       - name: Install dependencies
         run: pip install -r requirements.txt pyinstaller
@@ -41,11 +41,15 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force smoke_in | Out-Null
-          Start-Process dist\PriceExtractor.exe -ArgumentList "--extract","smoke_in","-o","smoke_out" -Wait
+          $p = Start-Process dist\PriceExtractor.exe -ArgumentList "--extract","smoke_in","-o","smoke_out" -PassThru
+          if (-not $p.WaitForExit(180000)) { $p.Kill(); Write-Output "::error::The exe did not finish within 3 minutes"; exit 1 }
+          if (-not (Test-Path smoke_out\report.txt)) { Write-Output "::error::The exe wrote no report (exit code $($p.ExitCode))"; exit 1 }
           $report = Get-Content smoke_out\report.txt -Raw
           $report
           # never publish an exe that lost its supplier parsers: everyone would update to it
-          if ($report -notmatch "Suppliers loaded: ([1-9]\d*)") { throw "The exe did not load any supplier" }
+          if ($report -notmatch "Suppliers loaded: ([1-9]\d*)") {
+            Write-Output "::error::The exe did not load any supplier: $($report -replace "`r?`n", ' | ')"; exit 1
+          }
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2
