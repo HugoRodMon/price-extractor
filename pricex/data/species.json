@@ -425,6 +425,8 @@
   "type_words": {
     "fairtrade": "FAIRTRADE",
     "fair trade": "FAIRTRADE",
-    "fair-trade": "FAIRTRADE"
+    "fair-trade": "FAIRTRADE",
+    "organic": "ORGANIC",
+    "bio": "BIO"
   }
 }
