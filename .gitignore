@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+build/
+dist/
+settings.json
+Prices extracted/
+output/
+smoke_in/
+smoke_out/
+# supplier price lists and final Excel files stay out of the repository
+*.pdf
+*.mhtml
+*.xlsx

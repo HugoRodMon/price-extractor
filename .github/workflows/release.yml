@@ -1,0 +1,54 @@
+# Builds PriceExtractor.exe and publishes it as a GitHub Release whenever a version tag is pushed:
+#     git tag v1.1.0
+#     git push origin v1.1.0
+# The team's apps see the new release on their next start and update themselves.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write          # needed to create the release
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Write version and repository into version.py
+        shell: pwsh
+        run: |
+          $v = "${{ github.ref_name }}".TrimStart("v")
+          $c = Get-Content version.py -Raw
+          $c = $c -replace '__version__ = ".*"', "__version__ = `"$v`""
+          $c = $c -replace 'UPDATE_REPO = ".*"', "UPDATE_REPO = `"${{ github.repository }}`""
+          Set-Content version.py $c -NoNewline
+          Get-Content version.py
+
+      - name: Build the exe
+        run: pyinstaller PriceExtractor.spec --noconfirm
+
+      - name: Smoke test (the exe starts and loads every supplier)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force smoke_in | Out-Null
+          Start-Process dist\PriceExtractor.exe -ArgumentList "--extract","smoke_in","-o","smoke_out" -Wait
+          $report = Get-Content smoke_out\report.txt -Raw
+          $report
+          # never publish an exe that lost its supplier parsers: everyone would update to it
+          if ($report -notmatch "Suppliers loaded: ([1-9]\d*)") { throw "The exe did not load any supplier" }
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/PriceExtractor.exe
+          generate_release_notes: true

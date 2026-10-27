@@ -1,0 +1,424 @@
+{
+  "_help": "species: name used in the Excel -> words that mean it (any language, lowercase). varieties: variety -> species, used when a supplier only writes the variety. ignore: products that are never extracted (no warning). Anything else with a price that isn't recognised is reported as 'unknown product' at the end.",
+  "species": {
+    "Apples": [
+      "apple",
+      "apples",
+      "appels",
+      "manzana"
+    ],
+    "Apricots": [
+      "apricot",
+      "apricots",
+      "abrikozen"
+    ],
+    "Avocados": [
+      "avocado",
+      "avocados",
+      "avo",
+      "aguacate",
+      "palta",
+      "green skin avocado",
+      "greenskin",
+      "greenskins",
+      "avocado greenskin",
+      "hass avocado",
+      "tropical avocado",
+      "netted avo"
+    ],
+    "Bananas": [
+      "banana",
+      "bananas",
+      "bananen"
+    ],
+    "Blueberries": [
+      "blueberry",
+      "blueberries",
+      "blauwe bessen",
+      "arandanos"
+    ],
+    "Cacao": [
+      "cacao",
+      "cocoa"
+    ],
+    "Carambolas": [
+      "carambola",
+      "carambolas",
+      "star fruit"
+    ],
+    "Cassava": [
+      "cassava",
+      "yuca"
+    ],
+    "Cherries": [
+      "cherry",
+      "cherries",
+      "kersen"
+    ],
+    "Coconuts": [
+      "coconut",
+      "coconuts",
+      "coco",
+      "young coco",
+      "kokosnoten",
+      "kokosnoot",
+      "drink coconuts"
+    ],
+    "Dates": [
+      "dates",
+      "medjool dates",
+      "dadels"
+    ],
+    "Dragon Fruits": [
+      "dragon fruit",
+      "dragon fruits",
+      "dragonfruit",
+      "pitahaya",
+      "pitahayas",
+      "pithaya"
+    ],
+    "Eddoes": [
+      "eddoe",
+      "eddoes"
+    ],
+    "Figs": [
+      "fig",
+      "figs",
+      "fresh figs",
+      "vijgen"
+    ],
+    "Garlic": [
+      "garlic",
+      "knoflook",
+      "ajo"
+    ],
+    "Ginger": [
+      "ginger",
+      "gember",
+      "jengibre"
+    ],
+    "Granadillas": [
+      "granadilla",
+      "granadillas",
+      "grenadilla"
+    ],
+    "Grapefruits": [
+      "grapefruit",
+      "grapefruits",
+      "pomelo/grapefruit"
+    ],
+    "Grapes": [
+      "grape",
+      "grapes",
+      "druiven",
+      "uva",
+      "white seedless",
+      "red seedless",
+      "black seedless",
+      "mix seedless",
+      "druiven wit",
+      "druiven rood",
+      "druiven blauw"
+    ],
+    "Guavas": [
+      "guava",
+      "guavas",
+      "guave"
+    ],
+    "Kaki": [
+      "kaki",
+      "persimmon",
+      "persimon",
+      "kaki persimon"
+    ],
+    "Kiwis": [
+      "kiwi",
+      "kiwis",
+      "kiwifruit"
+    ],
+    "Lemon Grass": [
+      "lemon grass",
+      "lemongrass",
+      "lemons grass"
+    ],
+    "Lemons": [
+      "lemon",
+      "lemons",
+      "citroenen",
+      "citroen",
+      "limon"
+    ],
+    "Limes": [
+      "lime",
+      "limes",
+      "limoenen",
+      "lima",
+      "fairtrade lime",
+      "fairtrade limes"
+    ],
+    "Lychees": [
+      "lychee",
+      "lychees",
+      "litchi"
+    ],
+    "Mandarins": [
+      "mandarin",
+      "mandarins",
+      "mandarijnen",
+      "easypeelers",
+      "easy peelers",
+      "blad mandarijnen",
+      "clementines",
+      "clementine"
+    ],
+    "Mangoes": [
+      "mango",
+      "mangoes",
+      "mangos",
+      "mangos by air",
+      "baby mangoes"
+    ],
+    "Mangosteens": [
+      "mangosteen",
+      "mangosteens"
+    ],
+    "Melons": [
+      "melon",
+      "melons",
+      "meloenen",
+      "gele meloenen"
+    ],
+    "Nectarines": [
+      "nectarine",
+      "nectarines",
+      "nectarinen",
+      "nectarin"
+    ],
+    "Onions": [
+      "onion",
+      "onions",
+      "uien"
+    ],
+    "Oranges": [
+      "orange",
+      "oranges",
+      "sinaasappelen",
+      "sinaasappel",
+      "naranja",
+      "oranges tc",
+      "oranges ot"
+    ],
+    "Papayas": [
+      "papaya",
+      "papayas"
+    ],
+    "Passion Fruits": [
+      "passion fruit",
+      "passion fruits",
+      "passionfruit",
+      "passionfruits",
+      "maracuya"
+    ],
+    "Peaches": [
+      "peach",
+      "peaches",
+      "perziken"
+    ],
+    "Pears": [
+      "pear",
+      "pears",
+      "peren"
+    ],
+    "Physalis": [
+      "physalis",
+      "golden berries",
+      "goldenberries"
+    ],
+    "Pineapples": [
+      "pineapple",
+      "pineapples",
+      "ananas"
+    ],
+    "Plantains": [
+      "plantain",
+      "plantains"
+    ],
+    "Plums": [
+      "plum",
+      "plums",
+      "pruimen",
+      "pruimen rood"
+    ],
+    "Pomegranates": [
+      "pomegranate",
+      "pomegranates",
+      "granaatappel",
+      "granaatappels",
+      "granada"
+    ],
+    "Pomelos": [
+      "pomelo",
+      "pomelos",
+      "pomelos white",
+      "pomelos red"
+    ],
+    "Pumpkins": [
+      "pumpkin",
+      "pumpkins"
+    ],
+    "Strawberries": [
+      "strawberry",
+      "strawberries",
+      "aardbeien"
+    ],
+    "Sweet Potatoes": [
+      "sweet potato",
+      "sweet potatoes",
+      "zoete aardappelen",
+      "zoete aardappel",
+      "batata"
+    ],
+    "Tamarinds": [
+      "tamarind",
+      "tamarinds"
+    ],
+    "Turmeric": [
+      "turmeric",
+      "curcuma"
+    ],
+    "Watermelons": [
+      "watermelon",
+      "watermelons",
+      "watermeloenen",
+      "mini watermelon"
+    ]
+  },
+  "varieties": {
+    "hass": "Avocados",
+    "lamb hass": "Avocados",
+    "gem hass": "Avocados",
+    "pinkerton": "Avocados",
+    "bacon": "Avocados",
+    "fuerte": "Avocados",
+    "zutano": "Avocados",
+    "ettinger": "Avocados",
+    "reed": "Avocados",
+    "ryan": "Avocados",
+    "nabal": "Avocados",
+    "semil 34": "Avocados",
+    "keitt": "Mangoes",
+    "keith": "Mangoes",
+    "kent": "Mangoes",
+    "palmer": "Mangoes",
+    "tommy": "Mangoes",
+    "tommy atkins": "Mangoes",
+    "osteen": "Mangoes",
+    "tahiti": "Limes",
+    "persian": "Limes",
+    "nadorcott": "Mandarins",
+    "tango": "Mandarins",
+    "orri": "Mandarins",
+    "satsuma": "Mandarins",
+    "midknight": "Oranges",
+    "midknights": "Oranges",
+    "delta seedless": "Oranges",
+    "navel": "Oranges",
+    "star ruby": "Grapefruits",
+    "eureka": "Lemons",
+    "primofiori": "Lemons",
+    "hayward": "Kiwis",
+    "wonderful": "Pomegranates",
+    "bellevue": "Sweet Potatoes",
+    "galia": "Melons",
+    "honeydew": "Melons",
+    "honey dew": "Melons",
+    "yellow honeydew": "Melons",
+    "cantaloupe": "Melons",
+    "hokkaido": "Pumpkins",
+    "nashi": "Pears",
+    "sweetie": "Grapefruits",
+    "white marsh": "Grapefruits",
+    "pomelo": "Pomelos"
+  },
+  "ignore": [
+    "lettuce",
+    "iceberg",
+    "ijsbergsla",
+    "aubergine",
+    "aubergines",
+    "cucumber",
+    "mini cucumber",
+    "capsicum",
+    "paprika",
+    "pepper",
+    "peppers",
+    "tomato",
+    "tomatoes",
+    "tomaat",
+    "plum cherry vine",
+    "cherry pruim",
+    "courgette",
+    "snijbonen",
+    "beans",
+    "butternut",
+    "butternuts",
+    "flespompoen",
+    "fles pompoen",
+    "muskaat pompoen",
+    "walnuts",
+    "walnut",
+    "macademia",
+    "macadamia",
+    "nuts",
+    "chestnuts",
+    "chestnut"
+  ],
+  "_help_size_series": "size_series: the sizes that exist for a species, used to expand a range like '6-12' (mangoes: 6,7,8,9,10,12). Species without a series only expand 'a--b' ranges.",
+  "size_series": {
+    "Mangoes": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "Avocados": [
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22,
+      24,
+      26,
+      28,
+      30,
+      32,
+      34,
+      36
+    ],
+    "Limes": [
+      30,
+      32,
+      36,
+      40,
+      42,
+      48,
+      54,
+      60,
+      63,
+      66,
+      70
+    ]
+  }
+}

@@ -1,0 +1,176 @@
+"""Turn any price file (pdf, txt, mhtml/html, xlsx) into something parsers can read."""
+import email
+import re
+import unicodedata
+from dataclasses import dataclass, field
+from datetime import datetime
+from email import policy
+from pathlib import Path
+
+
+@dataclass
+class Word:
+    text: str
+    x0: float
+    x1: float
+    top: float
+    size: float = 0
+    bold: bool = False
+
+    @property
+    def xc(self):
+        return (self.x0 + self.x1) / 2
+
+
+@dataclass
+class Line:
+    words: list
+    page: int = 0
+
+    @property
+    def text(self):
+        return " ".join(w.text for w in self.words)
+
+    @property
+    def top(self):
+        return min(w.top for w in self.words)
+
+    @property
+    def size(self):
+        return max(w.size for w in self.words)
+
+    def between(self, x_from, x_to):
+        """Text of the words whose centre lies between two x positions."""
+        return " ".join(w.text for w in self.words if x_from <= w.xc < x_to)
+
+    def __repr__(self):
+        return f"Line({self.text!r})"
+
+
+@dataclass
+class Document:
+    path: Path
+    kind: str                       # pdf | txt | html | xlsx
+    text: str = ""
+    lines: list = field(default_factory=list)   # pdf only
+    html: str = ""                  # mhtml/html only
+    sheets: dict = field(default_factory=dict)  # xlsx only: name -> list of rows (lists of values)
+
+    @property
+    def name(self):
+        return self.path.name
+
+
+def load(path):
+    path = Path(path)
+    ext = path.suffix.lower()
+    if ext == ".pdf":
+        lines = pdf_lines(path)
+        return Document(path, "pdf", text="\n".join(l.text for l in lines), lines=lines)
+    if ext in (".mhtml", ".mht", ".html", ".htm"):
+        html = read_html(path)
+        return Document(path, "html", text=re.sub(r"<[^>]+>", " ", html), html=html)
+    if ext in (".xlsx", ".xlsm"):
+        sheets = read_xlsx(path)
+        text = "\n".join(" ".join(str(v) for v in row if v is not None) for rows in sheets.values() for row in rows)
+        return Document(path, "xlsx", text=text, sheets=sheets)
+    if ext in (".txt", ".text", ""):
+        raw = path.read_bytes()
+        for enc in ("utf-8-sig", "cp1252", "latin-1"):
+            try:
+                return Document(path, "txt", text=raw.decode(enc))
+            except UnicodeDecodeError:
+                continue
+    raise ValueError(f"Unsupported file type: {path.name}")
+
+
+# ---------------------------------------------------------------- pdf
+
+def pdf_lines(path, y_tol=1.6):
+    """Every text line of the pdf, with word positions.
+
+    Some suppliers' pdfs have hidden text printed on top of the real text (e.g. a section
+    title under the first product). Words are only joined into one line when they share
+    the same height on the page *and* a similar font size, which keeps those apart."""
+    import pdfplumber
+
+    out = []
+    with pdfplumber.open(path) as pdf:
+        for pno, page in enumerate(pdf.pages):
+            raw = page.extract_words(x_tolerance=1.5, y_tolerance=1, keep_blank_chars=False,
+                                     use_text_flow=False, extra_attrs=["size", "fontname"])
+            # some pdfs have no mapping for the euro glyph (or ™) and give U+FFFD instead
+            words = [Word(fix_glyphs(w["text"]), w["x0"], w["x1"], w["top"], round(w["size"], 1),
+                          "bold" in w["fontname"].lower()) for w in raw]
+            words.sort(key=lambda w: (w.top, w.x0))
+            lines = []
+            for w in words:
+                for line in reversed(lines[-4:]):
+                    dt = abs(line.words[0].top - w.top)
+                    same_size = abs(line.words[0].size - w.size) <= 0.4
+                    if dt <= 0.6 or (dt <= y_tol and same_size):
+                        line.words.append(w)
+                        break
+                else:
+                    lines.append(Line([w], pno))
+            for line in lines:
+                line.words.sort(key=lambda w: w.x0)
+            lines.sort(key=lambda l: l.top)
+            out.extend(lines)
+    return out
+
+
+def fix_glyphs(text):
+    """A lone unknown glyph before a price is the € sign; anywhere else (Salute™) it's dropped."""
+    if text == "�":
+        return "€"
+    if re.fullmatch(r"�\d[\d.,]*", text):
+        return "€ " + text[1:]
+    # drop unknown / private-use glyphs (trademark signs and the like)
+    return "".join(ch for ch in text if ch not in "�™®©"
+                   and unicodedata.category(ch) not in ("Co", "Cc", "Cn"))
+
+
+# ---------------------------------------------------------------- html / mhtml
+
+def read_html(path):
+    if path.suffix.lower() in (".mhtml", ".mht"):
+        with open(path, "rb") as f:
+            msg = email.message_from_binary_file(f, policy=policy.default)
+        for part in msg.walk():
+            if part.get_content_type() == "text/html":
+                return part.get_content()
+        raise ValueError(f"No HTML found in {path.name}")
+    return path.read_text(encoding="utf-8", errors="replace")
+
+
+# ---------------------------------------------------------------- xlsx
+
+def read_xlsx(path):
+    import openpyxl
+
+    wb = openpyxl.load_workbook(path, data_only=True)
+    return {ws.title: [list(r) for r in ws.iter_rows(values_only=True)] for ws in wb}
+
+
+# ---------------------------------------------------------------- dates
+
+MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+MONTHS.update({"okt": 10, "mei": 5, "mrt": 3, "ene": 1, "abr": 4, "ago": 8, "dic": 12})
+
+
+def find_date(doc):
+    """Date of the price list: from the file name first (DD-MM-YYYY), then from the content."""
+    m = re.search(r"(\d{1,2})[-_.](\d{1,2})[-_.](\d{4})", doc.name)
+    if m:
+        return datetime(int(m[3]), int(m[2]), int(m[1]))
+    text = doc.text[:3000]
+    m = re.search(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})\b", text)
+    if m:
+        return datetime(int(m[3]), int(m[2]), int(m[1]))
+    m = re.search(r"\b(\d{1,2})(?:st|nd|rd|th)?[\s-]+(?:of\s+)?([a-z]{3})[a-z]*[\s-]+(\d{2,4})", text, re.I)
+    if m and m[2].lower() in MONTHS:
+        y = int(m[3]) + (2000 if len(m[3]) == 2 else 0)
+        return datetime(y, MONTHS[m[2].lower()], int(m[1]))
+    return None
