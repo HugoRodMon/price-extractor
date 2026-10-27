@@ -420,5 +420,11 @@
       66,
       70
     ]
+  },
+  "_help_type_words": "type_words: labels found in a product or variety name that go to the TYPE column instead (the word is removed from the name). Example: 'Fairtrade Limes' -> Limes, TYPE = FAIRTRADE.",
+  "type_words": {
+    "fairtrade": "FAIRTRADE",
+    "fair trade": "FAIRTRADE",
+    "fair-trade": "FAIRTRADE"
   }
 }

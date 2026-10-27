@@ -195,6 +195,22 @@ def species_from_variety(text):
     return best[1] if best else None
 
 
+def take_type_words(*texts):
+    """Find labels like 'Fairtrade' (species.json -> type_words). Returns (labels, texts without them)."""
+    words = json.loads((DATA / "species.json").read_text(encoding="utf-8")).get("type_words", {})
+    labels, out = [], []
+    for t in texts:
+        t = str(t or "")
+        for word, label in sorted(words.items(), key=lambda kv: -len(kv[0])):
+            pattern = rf"(?i)(?<!\w){re.escape(word)}(?!\w)"
+            if re.search(pattern, t):
+                if label not in labels:
+                    labels.append(label)
+                t = re.sub(r"\s+", " ", re.sub(pattern, " ", t)).strip(" -|")
+        out.append(t)
+    return labels, out
+
+
 def is_ignored(text):
     _, _, ignore, _ = _species_data()
     joined = " " + " ".join(_simplify(text)) + " "

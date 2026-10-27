@@ -45,6 +45,10 @@ class Supplier:
         for r in rows:
             if r.price is None or r.price <= 0:
                 continue
+            # "Fairtrade Limes" -> species Limes, TYPE FAIRTRADE (labels listed in species.json -> type_words)
+            tags, (r.specie, r.variety, r.type) = N.take_type_words(r.specie, r.variety, r.type)
+            if tags:
+                r.type = " ".join([r.type] + [t for t in tags if t not in r.type.split()]).strip()
             raw = r.specie
             label = " ".join(str(x) for x in (raw, r.variety) if x).strip()
             if N.is_ignored(label):
