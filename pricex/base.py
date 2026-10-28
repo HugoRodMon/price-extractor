@@ -73,7 +73,7 @@ class Supplier:
                     c.group = str(r.size) if len(sizes) > 1 else ""
                     c.size = s if s not in ("", None) else "N/S"
                     out.append(c)
-        return remove_duplicates(check_prices(out, result), result)
+        return remove_duplicates(check_per_kg(check_prices(out, result), result), result)
 
 
 # ---------------------------------------------------------------- price sanity checks
@@ -119,6 +119,47 @@ def check_prices(rows, result):
                 result.corrections.append(
                     f"CHECK {label}: the same product is usually €{usual:g} (kept, marked red)")
     return [r for r in rows if id(r) not in drop]
+
+
+# "per kg" sense check: limits in euro
+PER_KG_MAX = 25            # a price labelled per kg above this is probably the box price
+PER_KG_BOX_MAX = 150       # ...or when price x box weight would be more than this
+BOX_MIN_PER_KG = 0.15      # a box price below this per kg is probably a price per kg
+LOW_PRICE = 1.0            # without a weight, a price below this is probably per kg
+BIN_WEIGHT = 100           # a "box" this heavy is a bin, usually priced per kg
+
+
+def is_per_kg(r):
+    text = f"{r.detail} {r.type} {r.size} {r.packaging}".lower()
+    return bool(re.search(r"price\s*/\s*kg|per\s*kg|/\s*kg\b|€\s*/\s*kg", text))
+
+
+def check_per_kg(rows, result):
+    """Flag prices whose unit looks wrong: labelled per kg but priced like a box, or priced
+    like a kg without saying so (tiny price for the box weight, bins). Rows are never removed:
+    the price cell is coloured red and the reason is listed in the report."""
+    for r in rows:
+        w = r.weight if isinstance(r.weight, (int, float)) and r.weight > 0 else None
+        bin_text = re.search(r"\bbins?\b", f"{r.size} {r.packaging} {r.detail}".lower())
+        reason = ""
+        if is_per_kg(r):
+            is_bin = bin_text or (w and w >= BIN_WEIGHT)          # bins are priced per kg: that's normal
+            if r.price > PER_KG_MAX or (w and not is_bin and r.price * w > PER_KG_BOX_MAX):
+                box = f" (x {w:g} kg = €{r.price * w:,.0f} a box)" if w else ""
+                reason = f"labelled per kg, but €{r.price:g}/kg{box} looks like the price of the whole box"
+        elif w and w >= BIN_WEIGHT:
+            reason = f"{w:g} kg bin at €{r.price:g}: probably a price per kg"
+        elif bin_text:
+            reason = f"bin at €{r.price:g}: probably a price per kg"
+        elif w and r.price / w < BOX_MIN_PER_KG:
+            reason = f"€{r.price:g} for a {w:g} kg box is €{r.price / w:.2f}/kg: probably a price per kg"
+        elif not w and r.price < LOW_PRICE:
+            reason = f"€{r.price:g} with no weight: probably a price per kg"
+        if reason:
+            r.flag = r.flag or reason
+            result.corrections.append(
+                f"CHECK {r.specie} {r.variety} {r.origin} size {r.size}: {reason} (kept, marked red)")
+    return rows
 
 
 def remove_duplicates(rows, result):

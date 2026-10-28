@@ -37,7 +37,7 @@ class Report:
         fixes = [(r.supplier, c) for r in self.results for c in r.corrections]
         if fixes:
             out.append("")
-            out.append("PRICE CHECKS (prices that don't fit the rest of the same product):")
+            out.append("PRICE CHECKS (please look at these - red cells in the Excel; only 'dropped' rows were removed):")
             out += [f"   {s}: {c}" for s, c in fixes]
         warn = [(r.supplier, w) for r in self.results for w in r.warnings]
         if warn:

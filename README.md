@@ -42,7 +42,13 @@ Command line alternative: `python extract.py "folder or files" -o "output folder
   - if the same size is already offered at a normal price, the wrong row is **dropped**;
   - otherwise it's **kept with the price cell in red**.
   Both appear under "PRICE CHECKS" in the log. The 3x limit is `OUTLIER` in `pricex/base.py`.
-- Rows that are exactly identical are kept only once (the log says how many were removed). In the per-species files, a group goes into its
+- Rows that are exactly identical are kept only once (the log says how many were removed).
+- **Per kg check** (never removes anything, only marks the price red and lists it under "PRICE CHECKS"):
+  - labelled per kg but priced like a box: more than €25/kg, or price x box weight above €150
+    (bins labelled per kg are normal and not flagged);
+  - priced like a kg without saying so: under €0.15 per kg of box weight, a bin (100 kg or more, or "bin"
+    in the text), or under €1 when no weight is given.
+  The limits are at the top of `check_per_kg` in `pricex/base.py`. In the per-species files, a group goes into its
   own column if the final file already has one (e.g. Verdi plums `45/50`).
 - Pack sizes like `12x100`, `10x500gr` go to DETAIL; the size becomes `N/S`.
 - Empty variety becomes the species name. Species are written in plural (`Mangoes`, `Avocados`).
