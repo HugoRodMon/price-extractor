@@ -137,7 +137,8 @@ def split_sizes(size, species=None):
         if max(nums) <= 3 * max(min(nums), 1) and nums == sorted(nums):
             return nums
         return [s]
-    if len(parts) > 1 and all(re.fullmatch(r"(?i)[smlx]{1,4}|j{1,2}|xxl", p) for p in parts):
+    # S/M/L, S-M-L-XL, and sweet potato sizes like L1/L2, M/L1/L2
+    if len(parts) > 1 and all(re.fullmatch(r"(?i)[smlx]{1,4}\d?|j{1,2}|xxl", p) for p in parts):
         return [p.upper() for p in parts]                     # S/M/L, S-M-L-XL
     return [clean_size(s)]
 
@@ -197,7 +198,8 @@ def species_from_variety(text):
 
 def take_type_words(*texts):
     """Find labels like 'Fairtrade' (species.json -> type_words). Returns (labels, texts without them)."""
-    words = json.loads((DATA / "species.json").read_text(encoding="utf-8")).get("type_words", {})
+    data = json.loads((DATA / "species.json").read_text(encoding="utf-8"))
+    words = data.get("type_words", {})
     labels, out = [], []
     for t in texts:
         t = str(t or "")
@@ -206,8 +208,12 @@ def take_type_words(*texts):
             if re.search(pattern, t):
                 if label not in labels:
                     labels.append(label)
-                t = re.sub(r"\s+", " ", re.sub(pattern, " ", t)).strip(" -|")
+                t = re.sub(r"\s+", " ", re.sub(pattern, " ", t)).strip(" -|/")
         out.append(t)
+    for group in data.get("type_same", []):          # 'Bio/Organic' -> only ORGANIC
+        found = [g for g in group if g in labels]
+        for extra in found[1:]:
+            labels.remove(extra)
     return labels, out
 
 

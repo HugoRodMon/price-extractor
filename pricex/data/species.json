@@ -276,7 +276,10 @@
       "sweet potatoes",
       "zoete aardappelen",
       "zoete aardappel",
-      "batata"
+      "batata",
+      "sweet pots",
+      "zoete aard",
+      "zoete aardappels"
     ],
     "Tamarinds": [
       "tamarind",
@@ -371,7 +374,11 @@
     "macadamia",
     "nuts",
     "chestnuts",
-    "chestnut"
+    "chestnut",
+    "spring onion",
+    "spring onions",
+    "springonions",
+    "lente ui"
   ],
   "_help_size_series": "size_series: the sizes that exist for a species, used to expand a range like '6-12' (mangoes: 6,7,8,9,10,12). Species without a series only expand 'a--b' ranges.",
   "size_series": {
@@ -428,5 +435,15 @@
     "fair-trade": "FAIRTRADE",
     "organic": "ORGANIC",
     "bio": "BIO"
-  }
+  },
+  "_help_type_same": "type_same: labels that mean the same thing; when both are found only the first is written ('Bio/Organic' -> ORGANIC).",
+  "type_same": [
+    [
+      "ORGANIC",
+      "BIO"
+    ],
+    [
+      "FAIRTRADE"
+    ]
+  ]
 }

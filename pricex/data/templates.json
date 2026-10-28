@@ -2339,5 +2339,179 @@
     "DETAIL"
    ]
   }
+ },
+ "Denimpex": {
+  "file": "DENIMPEX.xlsx",
+  "sheets": {
+   "Sheet1": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "CAT",
+    "SIZE",
+    "BRAND",
+    "WEIGHT (KG)",
+    "PACKAGING",
+    "BOX PP",
+    "PRICE EUR",
+    "DETAIL"
+   ]
+  }
+ },
+ "EDN": {
+  "file": "EDN.xlsx",
+  "sheets": {
+   "Hoja1": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "SIZE",
+    "WEIGHT (KG)",
+    "BOX PP",
+    "PRICE EUR",
+    "CAT",
+    "PACKAGING",
+    "DETAIL",
+    "TYPE"
+   ]
+  }
+ },
+ "C.Gottmann": {
+  "file": "C.Gottmann.xlsx",
+  "sheets": {
+   "Pomegranates": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "9#",
+    "10#",
+    "12#",
+    "14#",
+    "S"
+   ],
+   "Grapes": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "N/S",
+    "DETAIL"
+   ],
+   "Limes": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "36#",
+    "42#",
+    "48#",
+    "54#",
+    "60#",
+    "MIX"
+   ],
+   "Mangoes": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "5#",
+    "6#",
+    "7#",
+    "8#",
+    "9#",
+    "10#",
+    "12#",
+    "MIX"
+   ],
+   "Melons": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "3#",
+    "4#",
+    "5#",
+    "6#",
+    "7#",
+    "8#",
+    "9#",
+    "10#",
+    "12#",
+    "13#",
+    "MIX"
+   ],
+   "Watermelons": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "N/S",
+    "3#",
+    "4#",
+    "5#",
+    "6#",
+    "7#",
+    "8#",
+    "9#",
+    "10#",
+    "12#",
+    "13#",
+    "MIX"
+   ],
+   "Avocados": [
+    "DATE",
+    "SPECIE",
+    "VARIETY",
+    "ORIGIN",
+    "BRAND",
+    "WEIGHT (KG)",
+    "CAT",
+    "PACKAGING",
+    "BOX PP",
+    "10#",
+    "12#",
+    "14#",
+    "16#",
+    "18#",
+    "20#",
+    "22#",
+    "24#",
+    "MIX"
+   ]
+  }
  }
 }
