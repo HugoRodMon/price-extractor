@@ -45,6 +45,8 @@ class Supplier:
         for r in rows:
             if r.price is None or r.price <= 0:
                 continue
+            # supplier codes for a variety ("329-5" -> Gem), listed in species.json -> variety_codes
+            r.specie, r.variety = N.replace_variety_codes(r.specie, r.variety)
             # "Fairtrade Limes" -> species Limes, TYPE FAIRTRADE (labels listed in species.json -> type_words)
             tags, (r.specie, r.variety, r.type) = N.take_type_words(r.specie, r.variety, r.type)
             if tags:

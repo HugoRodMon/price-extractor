@@ -341,7 +341,8 @@
     "nashi": "Pears",
     "sweetie": "Grapefruits",
     "white marsh": "Grapefruits",
-    "pomelo": "Pomelos"
+    "pomelo": "Pomelos",
+    "gem": "Avocados"
   },
   "ignore": [
     "lettuce",
@@ -378,7 +379,9 @@
     "spring onion",
     "spring onions",
     "springonions",
-    "lente ui"
+    "lente ui",
+    "komkommer",
+    "komkommers"
   ],
   "_help_size_series": "size_series: the sizes that exist for a species, used to expand a range like '6-12' (mangoes: 6,7,8,9,10,12). Species without a series only expand 'a--b' ranges.",
   "size_series": {
@@ -445,5 +448,9 @@
     [
       "FAIRTRADE"
     ]
-  ]
+  ],
+  "_help_variety_codes": "variety_codes: codes some suppliers use instead of the variety name; the code is replaced by the real variety (and the species is found from it). Example: '329-5' -> Gem (avocado).",
+  "variety_codes": {
+    "329-5": "Gem"
+  }
 }

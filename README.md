@@ -65,7 +65,8 @@ Command line alternative: `python extract.py "folder or files" -o "output folder
 ```
 
 Products you never want go under `ignore`. Labels that belong in the TYPE column instead of the name go under
-`type_words` (e.g. `"fairtrade": "FAIRTRADE"`: "Fairtrade Limes" -> Limes with TYPE = FAIRTRADE). Varieties that identify a species on their own (when a supplier
+`type_words` (e.g. `"fairtrade": "FAIRTRADE"`: "Fairtrade Limes" -> Limes with TYPE = FAIRTRADE).
+Codes a supplier uses instead of the variety name go under `variety_codes` (e.g. `"329-5": "Gem"`). Varieties that identify a species on their own (when a supplier
 writes just "Keitt") go under `varieties`.
 
 **A new country spelling**: add it to `pricex/data/origins.json`.

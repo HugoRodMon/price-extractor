@@ -196,6 +196,18 @@ def species_from_variety(text):
     return best[1] if best else None
 
 
+def replace_variety_codes(*texts):
+    """'329-5' -> 'Gem' (species.json -> variety_codes). Returns the texts with codes replaced."""
+    codes = json.loads((DATA / "species.json").read_text(encoding="utf-8")).get("variety_codes", {})
+    out = []
+    for t in texts:
+        t = str(t or "")
+        for code, name in codes.items():
+            t = re.sub(rf"(?i)(?<![\w-]){re.escape(code)}(?![\w-])", name, t)
+        out.append(t)
+    return out
+
+
 def take_type_words(*texts):
     """Find labels like 'Fairtrade' (species.json -> type_words). Returns (labels, texts without them)."""
     data = json.loads((DATA / "species.json").read_text(encoding="utf-8"))
