@@ -17,6 +17,7 @@ class Kraaijeveld(Supplier):
     final_file = "KRAAIJEVELD.xlsx"
     match_names = ["kraaijeveld"]
     match_text = ["kraaijeveld"]
+    layout_hints = [r"\d+\s*pall\s+size", r"prices netto\s*/\s*exw", r"\|\s*(?:hass|rte)\s*\|"]
     file_types = (".txt",)
     origin_style = "source"
 

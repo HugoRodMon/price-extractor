@@ -22,7 +22,8 @@ class Westfalia(Supplier):
     name = "Westfalia"
     final_file = "Westfalia Fruits pricelist.xlsx"
     match_names = ["westfalia"]
-    match_text = ["westfalia"]
+    match_text = ["westfalia fruit"]
+    layout_hints = [r"^x\d+\s+\d+\s*kg\s+[a-z]{2}", r"netted avo", r"🥑🥑"]
     file_types = (".txt",)
     layout = "wide"
     origin_style = "name"

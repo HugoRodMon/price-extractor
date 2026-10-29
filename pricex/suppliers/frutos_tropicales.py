@@ -21,6 +21,7 @@ class FrutosTropicales(Supplier):
     final_file = "Frutos Tropicales.xlsx"
     match_names = ["frutos tropicales", "frutos"]
     match_text = ["fteurope", "frutos tropicales"]
+    layout_hints = [r"variety\s+origin\s+brand\s+weight\s+packing\s+size\s+cpp\s+remark\s+price"]
     origin_style = "name"
     species_names = {"Dragon Fruits": "Pithaya", "Passion Fruits": "Passion fruits"}
 

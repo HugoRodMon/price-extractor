@@ -16,7 +16,8 @@ class AnacoGreeve(Supplier):
     name = "ANACO GREEVE"
     final_file = "ANACO GREEVE.xlsx"
     match_names = ["anaco"]
-    match_text = ["anacogreeve"]
+    match_text = ["anacogreeve", "anaco greeve"]
+    layout_hints = [r"article\s+size\s+euro\s+origin\s+brand\s+weight\s+c/pal"]
     origin_style = "source"
 
     def parse(self, doc):

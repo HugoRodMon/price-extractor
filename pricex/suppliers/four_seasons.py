@@ -17,7 +17,8 @@ class FourSeasons(Supplier):
     name = "Four Seasons"
     final_file = "Four Seasons Fruit Supply.xlsx"
     match_names = ["four seasons", "fourseasons"]
-    match_text = ["four seasons"]
+    match_text = ["four seasons", "fourseasons"]
+    layout_hints = [r"all prices are fot barendrecht", r"^\*[^*\n]+:\*\s*$"]
     file_types = (".txt",)
     origin_style = "name"
     default_packaging = ""

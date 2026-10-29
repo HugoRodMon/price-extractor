@@ -21,6 +21,7 @@ class Jaguar(Supplier):
     final_file = "Jaguar the fresh.xlsx"
     match_names = ["jaguar"]
     match_text = ["jaguar the fresh"]
+    layout_hints = [r"^.+\((?:[A-Z]{2})\)\s*(eta.*)?$", r"prices exclude bonuses"]
     file_types = (".txt",)
     layout = "wide"
     origin_style = "name"

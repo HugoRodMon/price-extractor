@@ -18,6 +18,7 @@ class Avoclear(Supplier):
     final_file = "Avoclear Europe.xlsx"
     match_names = ["avoclear"]
     match_text = ["avoclear"]
+    layout_hints = [r"product\s+origin\s+brand\s+cat\s+kg\s+pp\s+size\s+remark\s+price"]
     origin_style = "name"
 
     def parse(self, doc):

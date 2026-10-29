@@ -21,6 +21,7 @@ class Olympic(Supplier):
     final_file = "OLYMPIC.xlsx"
     match_names = ["olympic"]
     match_text = ["olympic fruit", "olympicfruit"]
+    layout_hints = [r"origin brand contains cat\. package boxes type"]
     layout = "wide"
     origin_style = "NAME"
     upper_species = True

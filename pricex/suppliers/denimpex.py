@@ -19,6 +19,7 @@ class Denimpex(Supplier):
     final_file = "DENIMPEX.xlsx"
     match_names = ["denimpex"]
     match_text = ["denimpex"]
+    layout_hints = [r"exw-nl", r"product origin cat\. size brand weight packaging pp price location"]
     origin_style = "source"
     default_packaging = ""           # the final file only writes Carton when the list says so
 

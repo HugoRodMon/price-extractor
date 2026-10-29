@@ -22,6 +22,7 @@ class EDN(Supplier):
     final_file = "EDN.xlsx"
     match_names = ["edn"]
     match_text = ["ednbv", "el dorado netherlands"]
+    layout_hints = [r"maat\s+verpakking\s+p/p\s+prijs"]
     origin_style = "source"
     default_cat = 1
 

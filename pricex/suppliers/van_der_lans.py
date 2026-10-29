@@ -19,7 +19,8 @@ class VanDerLans(Supplier):
     name = "Van der Lans"
     final_file = "VAN DER LANS.xlsx"
     match_names = ["van der lans", "vanderlans"]
-    match_text = ["vanderlans"]
+    match_text = ["vanderlans", "van der lans"]
+    layout_hints = [r"variety\s+origin\s+package\s+kg\.\s+p\.p\."]
     layout = "wide"
     origin_style = "name"
     species_names = {"Pomelos": "Pomelo"}

@@ -23,6 +23,7 @@ class Timerfruit(Supplier):
     final_file = "TIMERFRUIT.xlsx"
     match_names = ["timerfruit"]
     match_text = ["timerfruit"]
+    layout_hints = [r"omschrijving\s+klasse\s+merk\s+maat"]
     origin_style = "source"
     default_packaging = "CARTON"
     species_names = {"Nectarines": "Nectarin"}

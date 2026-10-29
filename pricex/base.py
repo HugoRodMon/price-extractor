@@ -15,7 +15,9 @@ class Supplier:
     name = ""                 # tab name in the combined file / name of the separate file
     final_file = ""           # the Excel the prices end up in (OneDrive); used to build the column template
     match_names = []          # lowercase words looked for in the file name
-    match_text = []           # lowercase words looked for in the file content (fallback)
+    match_text = []           # lowercase identifiers in the content (domain, e-mail, company, CoC number):
+                              # if one is found the supplier is certain, whatever the file is called
+    layout_hints = []         # regexes typical of this supplier's layout (used when there's no identifier)
     file_types = (".pdf",)
 
     # ---- output style

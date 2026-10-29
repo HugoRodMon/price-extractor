@@ -135,7 +135,9 @@ class Kissao(Supplier):
     name = "Kissao"
     final_file = "Kissao.xlsx"
     match_names = ["kissao"]
-    match_text = ["kissao"]
+    match_text = ["kissao", "kinobe", "kinobé"]
+    file_types = (".pdf", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff")
+    layout_hints = [r"boxes\s*/\s*pallet", r"daily export offer"]
     origin_style = "name"
     species_names = {"Passion Fruits": "Passion fruit", "Sweet Potatoes": "Sweet potato",
                      "Granadillas": "Granadilla", "Tamarinds": "Tamarind", "Mangosteens": "Mangosteen",

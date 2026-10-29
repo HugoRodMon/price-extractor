@@ -50,3 +50,4 @@ class Result:
     skipped: list = field(default_factory=list)    # products with a price but not tracked
     warnings: list = field(default_factory=list)
     corrections: list = field(default_factory=list)  # prices dropped / flagged by the sanity check
+    identified_by: str = ""                            # how the supplier was recognised

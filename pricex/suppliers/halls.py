@@ -18,6 +18,7 @@ class Halls(Supplier):
     final_file = "HALLS BV.xlsx"
     match_names = ["halls"]
     match_text = ["halls bv"]
+    layout_hints = [r"^size \S+\.?\s+(\d+p\s+)?\d+[.,]\d{2}e\s*$", r"subject to demand"]
     file_types = (".txt",)
     origin_style = "code"
     origin_overrides = {"Kenya": "KEN", "South Africa": "RSA", "Chile": "CL", "Peru": "PE"}

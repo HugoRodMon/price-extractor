@@ -19,6 +19,7 @@ class EverestFresh(Supplier):
     final_file = "EVEREST FRESH.xlsx"
     match_names = ["everest"]
     match_text = ["everestfresh", "everest fresh"]
+    layout_hints = [r"origin brand content pack box pp cat size"]
     layout = "wide"
     origin_style = "source"
     origin_overrides = {"Brazil": "Brazil", "Peru": "Peru", "Chile": "Chile", "Costa Rica": "Costa Rica"}

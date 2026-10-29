@@ -1,4 +1,17 @@
-"""Identify the supplier of each file and extract its prices."""
+"""Find out which supplier a file is from, and extract its prices.
+
+The file name is NOT trusted: files arrive as 'WhatsApp Image ...jpeg', with typos ('Westaflia'),
+or even named after the wrong supplier. The content decides:
+  1. identifiers in the text (web domain, e-mail, company name, Chamber of Commerce number...):
+     each supplier's `match_text`. If found, the supplier is certain.
+  2. otherwise the layout: every supplier that reads this kind of file tries it, and the one that
+     reads the most real products wins (`layout_hints` in each supplier add to its score).
+  3. the file name only helps to choose between equally good candidates, and typos are tolerated.
+If the name and the content disagree, the content wins and the report says so.
+"""
+import copy
+import difflib
+import re
 import traceback
 from pathlib import Path
 
@@ -7,18 +20,80 @@ from .base import suppliers
 from .model import Result
 
 
-def identify(path, doc=None):
-    """Supplier for a file: by file name first, then by words in its content."""
-    name = Path(path).name.lower()
+def name_hint(path):
+    """Supplier the file name suggests (typos tolerated: 'Westaflia' -> Westfalia), or None."""
+    words = re.findall(r"[a-z]{3,}", Path(path).stem.lower().replace(".", " "))
+    best, best_score = None, 0.0
     for s in suppliers():
-        if any(k in name for k in s.match_names):
-            return s
-    if doc is not None:
-        text = doc.text[:5000].lower()
-        for s in suppliers():
-            if s.match_text and any(k in text for k in s.match_text):
+        keys = set(s.match_names) | {s.name.lower()}
+        for k in keys:
+            # long keys anywhere in the name; short ones ('edn') only as a whole word ('wednesday' isn't EDN)
+            if (len(k) >= 5 and k in Path(path).name.lower()) or k in words:
                 return s
-    return None
+            for key_word in re.findall(r"[a-z]{4,}", k):
+                for w in words:
+                    score = difflib.SequenceMatcher(None, w, key_word).ratio()
+                    if score > best_score:
+                        best, best_score = s, score
+    return best if best_score >= 0.8 else None
+
+
+def identify(path, doc=None):
+    """(supplier, how it was recognised, warning or ''). Without the content, only the name is used."""
+    path = Path(path)
+    hint = name_hint(path)
+    if doc is None:
+        return hint, "file name", ""
+    ext = path.suffix.lower()
+    candidates = [s for s in suppliers() if ext in s.file_types]
+    text = doc.text.lower()
+
+    # 1. identifiers in the content
+    found = {s: [k for k in s.match_text if k in text] for s in candidates}
+    found = {s: k for s, k in found.items() if k}
+    if found:
+        best = max(found, key=lambda s: len(found[s]))
+        if sum(len(k) == len(found[best]) for k in found.values()) == 1:
+            return best, f"content ('{found[best][0]}')", _conflict(hint, best)
+        candidates = [s for s in found if len(found[s]) == len(found[best])]
+
+    # 2. layout: let each candidate read the file
+    scores = []
+    for s in candidates:
+        hints = sum(1 for rx in s.layout_hints if re.search(rx, text, re.I | re.M))
+        if not hints:
+            continue            # reading products isn't enough (flexible parsers read anyone's list):
+                                # the file must also look like this supplier's layout
+        rows = _trial(s, doc)
+        scores.append((rows + 15 * hints, rows, s))
+    scores.sort(key=lambda x: -x[0])
+    if scores and scores[0][1] > 0:
+        top = [x for x in scores if x[0] >= 0.75 * scores[0][0]]
+        if len(top) == 1:
+            return top[0][2], "layout", _conflict(hint, top[0][2])
+        if hint in [x[2] for x in top]:
+            return hint, "layout + file name", ""
+        names = ", ".join(x[2].name for x in top)
+        return None, "", f"could be {names}: rename the file with the supplier's name"
+    # 3. nothing in the content: the name is all there is
+    if hint and ext in hint.file_types:
+        return hint, "file name only", "nothing in the content confirms the supplier"
+    return None, "", ""
+
+
+def _trial(supplier, doc):
+    """How many real products the supplier's parser reads from the file (0 if it fails)."""
+    try:
+        rows = supplier.parse(copy.copy(doc))
+        return len(supplier.finalize(rows, Result(supplier.name, "", None)))
+    except Exception:
+        return 0
+
+
+def _conflict(hint, chosen):
+    if hint and hint is not chosen:
+        return f"the file name says {hint.name}, but the content is {chosen.name}'s: used {chosen.name}"
+    return ""
 
 
 def extract_file(path, supplier=None):
@@ -31,11 +106,16 @@ def extract_file(path, supplier=None):
         doc = readers.load(path)
     except Exception as e:
         return None, f"{path.name}: could not read the file ({e})"
-    supplier = supplier or identify(path, doc)
+    how, note = "chosen", ""
     if supplier is None:
-        return None, f"{path.name}: supplier not recognised"
+        supplier, how, note = identify(path, doc)
+    if supplier is None:
+        return None, f"{path.name}: not a price list of a known supplier" + (f" ({note})" if note else "")
     date = readers.find_date(doc)
     result = Result(supplier.name, path.name, date)
+    result.identified_by = how
+    if note:
+        result.warnings.append(note)
     if date is None:
         result.warnings.append("no date found in the file name or content")
     if doc.kind == "image":

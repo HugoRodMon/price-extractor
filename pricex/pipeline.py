@@ -24,13 +24,14 @@ class Report:
             out.append(f"Combined file: {self.combined.name}   (in {self.combined.parent})")
             for r in self.results:
                 if not any(r.supplier == s for s, _ in self.separate):
-                    out.append(f"   {r.supplier:<20} {len(r.rows):>4} rows   ({r.file})")
+                    out.append(f"   {r.supplier:<20} {len(r.rows):>4} rows   ({r.file}{_how(r)})")
         if self.separate:
             out.append("")
             out.append("SEPARATE FILES (their final file has a tab per species):")
             for name, path in self.separate:
                 n = sum(len(r.rows) for r in self.results if r.supplier == name)
-                out.append(f"   {name:<20} {n:>4} rows   -> {path.name}")
+                files = ", ".join(r.file + _how(r) for r in self.results if r.supplier == name)
+                out.append(f"   {name:<20} {n:>4} rows   -> {path.name}   (from {files})")
         if self.notes:
             out.append("")
             out.append("New columns / tabs (highlighted in yellow, not yet in the final file):")
@@ -57,6 +58,12 @@ class Report:
             out.append("NOT PROCESSED:")
             out += [f"   {e}" for e in self.errors]
         return "\n".join(out) if out else "Nothing to do."
+
+
+def _how(result):
+    """', recognised by its layout' when the supplier didn't come from identifiers or the file name."""
+    how = result.identified_by
+    return "" if not how or how.startswith(("content", "file name", "chosen")) else f", recognised by {how}"
 
 
 def run(files, out_dir, progress=None):

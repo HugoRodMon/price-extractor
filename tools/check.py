@@ -87,11 +87,15 @@ if __name__ == "__main__":
     if len(args) == 1 and Path(args[0]).is_dir():
         folder = Path(args[0])
         by_name = {s.name: s for s in suppliers()}
+        from pricex import readers
         from pricex.extractor import identify
         for f in sorted(folder.iterdir()):
-            if not re.search(r"\d{2}-\d{2}-\d{4}", f.name):
+            if not re.search(r"\d{2}-\d{2}-\d{4}", f.name) or f.suffix.lower() in (".jpeg", ".jpg", ".png", ".webp"):
                 continue
-            s = identify(f)
+            try:
+                s = identify(f, readers.load(f))[0]
+            except Exception:
+                s = None
             if s and (folder / s.final_file).exists():
                 check(f, folder / s.final_file, verbose="-v" in sys.argv)
             else:

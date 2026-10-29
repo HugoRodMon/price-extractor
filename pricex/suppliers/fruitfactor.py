@@ -20,7 +20,8 @@ class Fruitfactor(Supplier):
     name = "Fruitfactor"
     final_file = "Fruitfactor.xlsx"
     match_names = ["fruitfactor", "fruit factor"]
-    match_text = ["fruitfactor"]
+    match_text = ["fruitfactor", "59687789", "bieslookweg"]   # name, CoC number, address
+    layout_hints = [r"product origin brand box pp packing weight size & price"]
     layout = "wide"
     origin_style = "name"
 

@@ -20,6 +20,7 @@ class Gottmann(Supplier):
     final_file = "C.Gottmann.xlsx"
     match_names = ["gottmann"]
     match_text = ["gottmann"]
+    layout_hints = [r"product origin brand weight eta class pack box p\.?p"]
     layout = "wide"
     origin_style = "name"
     default_packaging = "CARTON"

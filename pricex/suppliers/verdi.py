@@ -22,7 +22,8 @@ class Verdi(Supplier):
     final_file = "Verdi.xlsx"
     match_names = ["verdi"]
     match_text = ["0031 (0)180 61 88 11"]
-    file_types = (".xlsx",)
+    layout_hints = [r"prijzen in euro", r"product\s+merk\s+gewicht\s+p/p"]
+    file_types = (".xlsx", ".xlsm")
     layout = "wide"
     origin_style = "source"
 

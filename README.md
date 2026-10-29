@@ -93,6 +93,8 @@ python tools/update_templates.py "folder with the final files"
 
 A final file with more than one tab automatically produces a separate file; one tab means a tab in the combined file.
 
+**How files are recognised**: the file name is not trusted. A file belongs to a supplier when its text contains one of the supplier's `match_text` identifiers (web domain, e-mail, company name, Chamber of Commerce number), or, when there is none (WhatsApp messages), when its layout matches the supplier's `layout_hints` and the supplier's parser reads real products from it. The name only breaks ties (typos are fine). If the name and the content disagree, the content wins and the log says so; files that match no supplier are listed as not recognised. When adding a supplier, give it identifiers and layout hints.
+
 **A supplier changed its layout, or a new supplier**: each supplier is one file in `pricex/suppliers/`
 (e.g. `kissao.py`). The top of each file shows what the layout looks like. To add a supplier, copy the one
 whose layout is most similar, change `name`, `final_file`, `match_names` (words in the file name) and the

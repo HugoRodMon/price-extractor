@@ -12,8 +12,9 @@ class TorresTropical(Supplier):
     name = "Torres Tropical"
     final_file = "Torres Tropical.xlsx"
     match_names = ["torres"]
-    match_text = ["torrestropical"]
-    file_types = (".mhtml", ".html")
+    match_text = ["torrestropical", "torres tropical"]
+    layout_hints = [r"productgroup"]
+    file_types = (".mhtml", ".mht", ".html", ".htm")
     origin_style = "source"
     default_packaging = ""
 

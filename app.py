@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox, ttk
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import updater  # noqa: E402
 from pricex.base import suppliers  # noqa: E402
-from pricex.extractor import identify  # noqa: E402
+from pricex.extractor import name_hint  # noqa: E402
 from pricex.pipeline import SUPPORTED, run  # noqa: E402
 from version import __version__  # noqa: E402
 
@@ -190,8 +190,9 @@ class App:
                     left_out += 1
                     continue
                 self.files.append(f)
-                sup = identify(f)
-                self.tree.insert("", "end", iid=str(f), values=(sup.name if sup else "? (checked on extract)", f.name))
+                sup = name_hint(f)              # a first guess; the content decides when extracting
+                self.tree.insert("", "end", iid=str(f),
+                                 values=(f"{sup.name} (name)" if sup else "? (read when extracting)", f.name))
         note = f"   ({left_out} final Excel file(s) left out)" if left_out else ""
         self.count.configure(text=f"{len(self.files)} file(s){note}")
 
@@ -249,6 +250,13 @@ class App:
         self.go_btn.configure(state="normal")
         rows = sum(len(r.rows) for r in report.results)
         self.status.configure(text=f"Done: {rows} prices")
+        # show which supplier each file really is (read from its content)
+        for f in self.files:
+            res = next((r for r in report.results if r.file == f.name), None)
+            if res:
+                self.tree.set(str(f), "supplier", res.supplier + ("" if res.identified_by.startswith("file name") else " ✓"))
+            elif any(e.startswith(f.name) for e in report.errors):
+                self.tree.set(str(f), "supplier", "NOT RECOGNISED")
         for line in report.text().splitlines():
             tag = "head" if line and not line.startswith(" ") else None
             if line.startswith("NOT PROCESSED") or line.startswith("WARNINGS"):
