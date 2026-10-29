@@ -10,7 +10,9 @@ binaries = []
 # Listed from the folder (collect_submodules finds nothing when run as `pyinstaller` instead of `python -m`).
 hiddenimports = ["pricex.suppliers." + f.stem for f in sorted(Path("pricex/suppliers").glob("*.py"))
                  if f.stem != "__init__"]
-for pkg in ("tkinterdnd2", "pypdfium2", "pypdfium2_raw"):
+for pkg in ("tkinterdnd2", "pypdfium2", "pypdfium2_raw",
+            "rapidocr_onnxruntime",                       # OCR for pictures: models + config
+            "winrt"):                                     # Windows' own OCR
     d, b, h = collect_all(pkg)
     datas += d
     binaries += b
@@ -23,8 +25,8 @@ a = Analysis(
     datas=datas,
     hiddenimports=hiddenimports,
     # big libraries installed on the build machine that the app never uses
-    excludes=["pandas", "numpy", "matplotlib", "camelot", "tabula", "fitz", "pymupdf", "IPython", "notebook",
-              "cv2", "scipy", "lxml", "pytest", "setuptools"],
+    excludes=["pandas", "matplotlib", "camelot", "tabula", "fitz", "pymupdf", "IPython", "notebook",
+              "scipy", "lxml", "pytest", "setuptools", "torch", "tensorflow"],
 )
 pyz = PYZ(a.pure)
 exe = EXE(

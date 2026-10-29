@@ -22,7 +22,10 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: |
+          pip install -r requirements.txt pyinstaller
+          # without its dependencies, so it uses opencv-python-headless (much smaller) from requirements.txt
+          pip install --no-deps rapidocr-onnxruntime
 
       - name: Write version and repository into version.py
         shell: pwsh

@@ -45,6 +45,9 @@ class Supplier:
         for r in rows:
             if r.price is None or r.price <= 0:
                 continue
+            if r.flag:                     # the parser wasn't sure about this row (e.g. read from a picture)
+                result.corrections.append(f"CHECK {r.specie} {r.variety} {r.origin} size {r.size or '?'} "
+                                          f"€{r.price:g}: {r.flag} (kept, marked red)")
             # supplier codes for a variety ("329-5" -> Gem), listed in species.json -> variety_codes
             r.specie, r.variety = N.replace_variety_codes(r.specie, r.variety)
             # "Fairtrade Limes" -> species Limes, TYPE FAIRTRADE (labels listed in species.json -> type_words)

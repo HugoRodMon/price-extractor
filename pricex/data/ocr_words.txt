@@ -1,0 +1,10 @@
+# Extra words that appear in price lists sent as pictures. Misread words are corrected to the closest
+# word in this list (and to the species, varieties and countries in species.json / origins.json).
+# One or more words per line; lines starting with # are ignored.
+
+# column names
+Product Origin Variety Size Packing Boxes pallet Price Availability Plts Brand Weight Remark
+# packing and remarks
+netto carton plastic boat expected
+# product descriptions
+green skin tropical young coco easy open press button brown brow red white honey free mrl

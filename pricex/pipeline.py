@@ -6,7 +6,8 @@ from .base import suppliers
 from .extractor import extract_file
 from .output import write_all
 
-SUPPORTED = {".pdf", ".txt", ".mhtml", ".mht", ".html", ".htm", ".xlsx", ".xlsm"}
+SUPPORTED = {".pdf", ".txt", ".mhtml", ".mht", ".html", ".htm", ".xlsx", ".xlsm",
+             ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}     # pictures are read with OCR
 
 
 @dataclass

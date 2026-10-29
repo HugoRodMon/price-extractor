@@ -55,6 +55,20 @@ Command line alternative: `python extract.py "folder or files" -o "output folder
 - "By air", "RTE"... go to TYPE (or DETAIL, depending on what that supplier's final file does).
 - Origins are written the way each final file does: codes (`RSA`, `BR`) or names (`South Africa`).
 
+## Price lists sent as pictures
+
+Pictures (png, jpg, webp...) are read with OCR, so the extractor works when a supplier sends a screenshot
+instead of a pdf (so far: Kissao). The file name doesn't need the supplier: it's recognised from the text.
+
+- Two OCR engines read the picture: RapidOCR (best for names and sizes) and the OCR built into Windows
+  (best for numbers). Prices come from Windows' reading; sizes and varieties are compared between the two.
+- Misread words are corrected to known words: species, countries, `data/ocr_words.txt`, and every
+  variety already typed in the final files (rebuilt by `tools/update_templates.py`).
+- **Nothing is guessed.** Rows where the two readings disagree, something is missing, or a variety could
+  only be read once are kept but marked red, with the reason in the report. The report also says the file
+  came from a picture: compare the rows with it before using them.
+- Small pictures read worse. If a supplier can send the pdf or a bigger picture, that's always better.
+
 ## When something changes
 
 **A new product** (e.g. "Rambutan" shows up as not extracted): open `pricex/data/species.json` and add it under

@@ -108,7 +108,7 @@ class App:
         main = ttk.Frame(self.root, padding=16)
         main.pack(fill="both", expand=True)
 
-        hint = "Drop price files here (pdf, txt, mhtml, xlsx)  -  or click to choose" if DND else "Click to choose price files"
+        hint = "Drop price files here (pdf, txt, mhtml, xlsx, pictures)  -  or click to choose" if DND else "Click to choose price files"
         self.drop = tk.Label(main, text=hint, bg="#18191d", fg=MUTED, font=("Segoe UI", 11), cursor="hand2",
                              highlightthickness=2, highlightbackground="#3a3d45")
         self.drop.pack(fill="x", ipady=22)

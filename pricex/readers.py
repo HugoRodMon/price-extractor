@@ -52,7 +52,8 @@ class Document:
     path: Path
     kind: str                       # pdf | txt | html | xlsx
     text: str = ""
-    lines: list = field(default_factory=list)   # pdf only
+    lines: list = field(default_factory=list)   # pdf and pictures
+    second: list = field(default_factory=list)  # pictures: a second OCR reading, to double-check numbers
     html: str = ""                  # mhtml/html only
     sheets: dict = field(default_factory=dict)  # xlsx only: name -> list of rows (lists of values)
 
@@ -67,6 +68,10 @@ def load(path):
     if ext == ".pdf":
         lines = pdf_lines(path)
         return Document(path, "pdf", text="\n".join(l.text for l in lines), lines=lines)
+    if ext in IMAGE_TYPES:
+        lines, second = ocr_lines(path)
+        text = "\n".join(l.text for l in lines + second)
+        return Document(path, "image", text=text, lines=lines, second=second)
     if ext in (".mhtml", ".mht", ".html", ".htm"):
         html = read_html(path)
         return Document(path, "html", text=re.sub(r"<[^>]+>", " ", html), html=html)
@@ -131,6 +136,40 @@ def fix_glyphs(text):
                    and unicodedata.category(ch) not in ("Co", "Cc", "Cn"))
 
 
+# ---------------------------------------------------------------- images (OCR)
+
+IMAGE_TYPES = (".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".gif")
+
+
+def ocr_lines(path):
+    """Text of a picture (see ocr.py) as lines of words with positions, like pdf_lines, so the same
+    supplier parsers work on pictures. Returns (main lines, second reading's lines)."""
+    from .ocr import read_picture
+
+    main, second = read_picture(path)
+    as_lines = lambda ws: _rows([Word(t, x0, x1, top, round(h, 1)) for t, x0, x1, top, h in ws])  # noqa: E731
+    return as_lines(main), as_lines(second)
+
+
+def _rows(words):
+    """Group words into table rows by their height on the page (OCR splits a row into pieces)."""
+    words.sort(key=lambda w: (w.top + w.size / 2, w.x0))
+    lines = []
+    for w in words:
+        mid = w.top + w.size / 2
+        line = lines[-1] if lines else None
+        if line and abs(mid - line.mid) <= max(2.5, 0.45 * w.size):
+            line.words.append(w)
+            line.mid = sum(x.top + x.size / 2 for x in line.words) / len(line.words)
+        else:
+            line = Line([w])
+            line.mid = mid
+            lines.append(line)
+    for line in lines:
+        line.words.sort(key=lambda w: w.x0)
+    return lines
+
+
 # ---------------------------------------------------------------- html / mhtml
 
 def read_html(path):
@@ -165,6 +204,9 @@ def find_date(doc):
     m = re.search(r"(\d{1,2})[-_.](\d{1,2})[-_.](\d{4})", doc.name)
     if m:
         return datetime(int(m[3]), int(m[2]), int(m[1]))
+    m = re.search(r"(20\d{2})[-_.](\d{1,2})[-_.](\d{1,2})", doc.name)     # 'WhatsApp Image 2026-10-29 ...'
+    if m:
+        return datetime(int(m[1]), int(m[2]), int(m[3]))
     text = doc.text[:3000]
     m = re.search(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})\b", text)
     if m:

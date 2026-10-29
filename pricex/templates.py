@@ -31,6 +31,24 @@ def headers_of(xlsx_path):
     return out
 
 
+def varieties_of(xlsx_path):
+    """Every variety ever typed in a final file: used to correct words read from pictures."""
+    import openpyxl
+
+    wb = openpyxl.load_workbook(xlsx_path, read_only=True)
+    out = set()
+    for ws in wb:
+        rows = ws.iter_rows(values_only=True)
+        headers = [str(h).strip().upper() if h is not None else "" for h in next(rows, ())]
+        if "VARIETY" not in headers:
+            continue
+        i = headers.index("VARIETY")
+        for r in rows:
+            if r and i < len(r) and isinstance(r[i], str) and r[i].strip() and len(r[i]) < 40:
+                out.add(r[i].strip())
+    return sorted(out)
+
+
 def build(folder, supplier_list):
     folder = Path(folder)
     data = load()
@@ -38,7 +56,7 @@ def build(folder, supplier_list):
     for s in supplier_list:
         f = folder / s.final_file if s.final_file else None
         if f and f.exists():
-            data[s.name] = {"file": s.final_file, "sheets": headers_of(f)}
+            data[s.name] = {"file": s.final_file, "sheets": headers_of(f), "varieties": varieties_of(f)}
             found.append(s.name)
         else:
             missing.append(s.name)

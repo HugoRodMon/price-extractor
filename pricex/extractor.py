@@ -38,6 +38,9 @@ def extract_file(path, supplier=None):
     result = Result(supplier.name, path.name, date)
     if date is None:
         result.warnings.append("no date found in the file name or content")
+    if doc.kind == "image":
+        result.warnings.append("read from a picture (OCR): compare the rows with the picture before using them; "
+                               "red cells are rows with missing or unclear data")
     try:
         rows = supplier.parse(doc)
     except Exception:
