@@ -17,9 +17,14 @@ class Report:
     combined: object = None
     separate: list = field(default_factory=list)     # [(supplier, path)]
     notes: list = field(default_factory=list)
+    renamed: list = field(default_factory=list)      # [(wanted, used)] files saved under another name
 
     def text(self):
         out = []
+        if self.renamed:
+            out.append("SAVED UNDER A NEW NAME (the file with the usual name is open, probably in Excel):")
+            out += [f"   {used}   (instead of {wanted})" for wanted, used in self.renamed]
+            out.append("")
         if self.combined:
             out.append(f"Combined file: {self.combined.name}   (in {self.combined.parent})")
             for r in self.results:
@@ -83,7 +88,7 @@ def run(files, out_dir, progress=None):
     with_rows = [r for r in report.results if r.rows]
     if with_rows:
         by_name = {s.name: s for s in suppliers()}
-        report.combined, report.separate, report.notes = write_all(with_rows, out_dir, by_name)
+        report.combined, report.separate, report.notes, report.renamed = write_all(with_rows, out_dir, by_name)
     if progress:
         progress(len(files), len(files), "")
     return report

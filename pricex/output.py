@@ -147,8 +147,8 @@ def write_wide_file(path, supplier, results, tpl):
             for i in flagged_cols:
                 ws.cell(ws.max_row, i + 1).fill = SUSPECT
         _finish(ws, len(headers), new_cols)
-    wb.save(path)
-    return sum(len(v) for v in groups.values()), notes
+    path = save_workbook(wb, path)
+    return sum(len(v) for v in groups.values()), notes, path
 
 
 def _size_label(size, headers):
@@ -160,6 +160,40 @@ def _size_label(size, headers):
     if sum(h.startswith("#") for h in sizes) > len(sizes) / 2:
         return f"#{size}"
     return str(size)
+
+
+# ---------------------------------------------------------------- saving
+
+class OutputFolderError(Exception):
+    """The output folder can't be written to at all."""
+
+
+def folder_problem(folder, error):
+    return OutputFolderError(
+        f"Windows doesn't allow saving in this folder:\n{folder}\n\n({error})\n\n"
+        "Possible causes:\n"
+        " - the folder is read-only, or on a shared/network drive without write access\n"
+        " - Windows Security 'Controlled folder access' blocks unknown programs from writing in\n"
+        "   Documents/Desktop (allow PriceExtractor.exe there, or use another folder)\n"
+        " - OneDrive is busy with the folder\n\n"
+        "Choose another output folder (e.g. one in Downloads) and try again.")
+
+
+def save_workbook(wb, path):
+    """Save; if the file is open in Excel (Windows locks it), save as 'name (2).xlsx', '(3)'...
+    Returns the path actually written."""
+    path = Path(path)
+    candidates = [path] + [path.with_name(f"{path.stem} ({i}){path.suffix}") for i in range(2, 30)]
+    first_error = None
+    for p in candidates:
+        try:
+            wb.save(p)
+            return p
+        except PermissionError as e:
+            first_error = first_error or e
+            if not p.exists():
+                break           # a new file can't be created either: the folder itself is the problem
+    raise folder_problem(path.parent, first_error)
 
 
 # ---------------------------------------------------------------- all
@@ -176,7 +210,10 @@ def write_all(results, out_dir, supplier_by_name):
     """Combined workbook for 'long' suppliers, separate files for 'wide' ones.
     Returns (combined path or None, [(supplier, separate path)], notes)."""
     out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError as e:
+        raise folder_problem(out_dir, e)
     tpls = templates.load()
     by_supplier = OrderedDict()
     for res in results:
@@ -186,20 +223,24 @@ def write_all(results, out_dir, supplier_by_name):
     label = dates[-1].strftime("%d-%m-%Y") if dates else "undated"
 
     combined = None
-    separate, notes = [], []
+    separate, notes, renamed = [], [], []          # renamed: [(wanted name, name used)] when a file was open
     wb = Workbook()
     wb.remove(wb.active)
     for name, res_list in by_supplier.items():
         sup = supplier_by_name[name]
         if is_wide(sup, tpls.get(name)):
             own = sorted(r.date for r in res_list if r.date)
-            path = out_dir / f"{name} {own[-1].strftime('%d-%m-%Y') if own else label}.xlsx"
-            n, sheet_notes = write_wide_file(path, sup, res_list, tpls.get(name))
+            wanted = out_dir / f"{name} {own[-1].strftime('%d-%m-%Y') if own else label}.xlsx"
+            n, sheet_notes, path = write_wide_file(wanted, sup, res_list, tpls.get(name))
             separate.append((name, path))
             notes += [f"{name}: {x}" for x in sheet_notes]
+            if path != wanted:
+                renamed.append((wanted.name, path.name))
         else:
             write_long_sheet(wb, sup, res_list, tpls.get(name))
     if wb.sheetnames:
-        combined = out_dir / f"Prices {label}.xlsx"
-        wb.save(combined)
-    return combined, separate, notes
+        wanted = out_dir / f"Prices {label}.xlsx"
+        combined = save_workbook(wb, wanted)
+        if combined != wanted:
+            renamed.append((wanted.name, combined.name))
+    return combined, separate, notes, renamed

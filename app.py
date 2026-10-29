@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import updater  # noqa: E402
 from pricex.base import suppliers  # noqa: E402
 from pricex.extractor import name_hint  # noqa: E402
+from pricex.output import OutputFolderError  # noqa: E402
 from pricex.pipeline import SUPPORTED, run  # noqa: E402
 from version import __version__  # noqa: E402
 
@@ -244,7 +245,13 @@ class App:
     def failed(self, e):
         self.go_btn.configure(state="normal")
         self.status.configure(text="Failed")
-        messagebox.showerror("Price Extractor", f"Something went wrong:\n{e}")
+        if isinstance(e, OutputFolderError):
+            messagebox.showerror("Can't save in this folder", str(e))
+        elif isinstance(e, PermissionError):
+            messagebox.showerror("Price Extractor", f"Windows refused access to a file:\n{e}\n\n"
+                                 "If it's one of the price Excel files, close it in Excel and try again.")
+        else:
+            messagebox.showerror("Price Extractor", f"Something went wrong:\n{e}")
 
     def done(self, report):
         self.go_btn.configure(state="normal")
@@ -264,6 +271,9 @@ class App:
             self.log.insert("end", line + "\n", tag)
 
         msg = []
+        if report.renamed:
+            msg.append("These files are open (probably in Excel), so the new prices were saved as:\n" +
+                       "\n".join(f"   {used}" for _, used in report.renamed))
         if report.combined:
             msg.append(f"Combined file:\n   {report.combined.name}")
         if report.separate:
