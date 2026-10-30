@@ -311,6 +311,18 @@ def packaging_from(text, weight=None, default="Carton"):
     return default
 
 
+def packaging_rule(species, weight):
+    """Fixed packaging for a species and box weight (species.json -> packaging_rules), or None.
+    E.g. grapes of 5 kg are always 'CARTON 10X500G'."""
+    if not isinstance(weight, (int, float)):
+        return None
+    rules = json.loads((DATA / "species.json").read_text(encoding="utf-8")).get("packaging_rules", [])
+    for rule in rules:
+        if rule["species"] == species and abs(float(weight) - float(rule["weight"])) < 0.01:
+            return rule["packaging"]
+    return None
+
+
 def box_type(text):
     """OT -> Open Top, TC -> Telescopic."""
     s = " " + str(text or "").lower().replace(".", "") + " "

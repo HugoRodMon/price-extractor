@@ -455,5 +455,13 @@
   "_help_variety_codes": "variety_codes: codes some suppliers use instead of the variety name; the code is replaced by the real variety (and the species is found from it). Example: '329-5' -> Gem (avocado).",
   "variety_codes": {
     "329-5": "Gem"
-  }
+  },
+  "_help_packaging_rules": "packaging_rules: fixed PACKAGING for a species with a given box weight, whatever the price list says. Example: grapes of 5 kg are always CARTON 10X500G.",
+  "packaging_rules": [
+    {
+      "species": "Grapes",
+      "weight": 5,
+      "packaging": "CARTON 10X500G"
+    }
+  ]
 }
