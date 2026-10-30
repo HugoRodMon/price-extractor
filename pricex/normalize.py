@@ -311,15 +311,21 @@ def packaging_from(text, weight=None, default="Carton"):
     return default
 
 
-def packaging_rule(species, weight):
-    """Fixed packaging for a species and box weight (species.json -> packaging_rules), or None.
-    E.g. grapes of 5 kg are always 'CARTON 10X500G'."""
+def packaging_rule(species, weight, packaging="", other=""):
+    """Packaging for a species and box weight (species.json -> packaging_rules), or None.
+    E.g. grapes of 5 kg are 'CARTON 10X500G', but only when the price list says carton or nothing about
+    the packaging: if it mentions another one ('Foam', 'Plastic', 'Wood'... in the packaging or in the
+    details), the supplier's packaging is kept."""
     if not isinstance(weight, (int, float)):
         return None
     rules = json.loads((DATA / "species.json").read_text(encoding="utf-8")).get("packaging_rules", [])
+    text = f"{packaging} {other}".lower()
     for rule in rules:
-        if rule["species"] == species and abs(float(weight) - float(rule["weight"])) < 0.01:
-            return rule["packaging"]
+        if rule["species"] != species or abs(float(weight) - float(rule["weight"])) >= 0.01:
+            continue
+        if any(re.search(rf"(?<![a-z]){re.escape(w)}(?![a-z])", text) for w in rule.get("unless", [])):
+            return None
+        return rule["packaging"]
     return None
 
 

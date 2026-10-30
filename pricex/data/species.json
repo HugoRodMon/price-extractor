@@ -456,12 +456,29 @@
   "variety_codes": {
     "329-5": "Gem"
   },
-  "_help_packaging_rules": "packaging_rules: fixed PACKAGING for a species with a given box weight, whatever the price list says. Example: grapes of 5 kg are always CARTON 10X500G.",
+  "_help_packaging_rules": "packaging_rules: PACKAGING for a species with a given box weight when the price list says carton or nothing about the packaging. If it mentions another packaging (words in 'unless'), the supplier's packaging is kept. Example: grapes of 5 kg -> CARTON 10X500G.",
   "packaging_rules": [
     {
       "species": "Grapes",
       "weight": 5,
-      "packaging": "CARTON 10X500G"
+      "packaging": "CARTON 10X500G",
+      "unless": [
+        "foam",
+        "wood",
+        "wooden",
+        "plastic",
+        "polystyrene",
+        "styrofoam",
+        "crate",
+        "bag",
+        "bags",
+        "sack",
+        "bin",
+        "bins",
+        "basket",
+        "tray",
+        "polycote"
+      ]
     }
   ]
 }

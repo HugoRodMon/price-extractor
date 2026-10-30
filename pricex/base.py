@@ -69,7 +69,8 @@ class Supplier:
             if self.upper_species:
                 r.specie = r.specie.upper()
             r.variety = re.sub(r"\s+", " ", str(r.variety or "")).strip() or r.specie
-            r.packaging = N.packaging_rule(species, r.weight) or r.packaging or self.default_packaging
+            r.packaging = (N.packaging_rule(species, r.weight, r.packaging, f"{r.detail} {r.type} {r.variety}")
+                           or r.packaging or self.default_packaging)
             r.cat = r.cat if r.cat not in ("", None) else self.default_cat
             sizes = N.split_sizes(r.size, species)
             # "Dom. Rep. / Colombia": one row per origin, like grouped sizes

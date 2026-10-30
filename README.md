@@ -81,7 +81,7 @@ instead of a pdf (so far: Kissao). The file name doesn't need the supplier: it's
 Products you never want go under `ignore`. Labels that belong in the TYPE column instead of the name go under
 `type_words` (e.g. `"fairtrade": "FAIRTRADE"`: "Fairtrade Limes" -> Limes with TYPE = FAIRTRADE).
 Codes a supplier uses instead of the variety name go under `variety_codes` (e.g. `"329-5": "Gem"`).
-Fixed packaging for a species and box weight goes under `packaging_rules` (grapes of 5 kg are always
+Fixed packaging for a species and box weight goes under `packaging_rules` (grapes of 5 kg are
 `CARTON 10X500G`). Varieties that identify a species on their own (when a supplier
 writes just "Keitt") go under `varieties`.
 
